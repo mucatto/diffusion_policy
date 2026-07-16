@@ -4,6 +4,13 @@ wandb
 outputs
 data
 data_local
+
+# Local reproduction environment and runtime artifacts
+.tools/
+runs/
+*.ckpt
+*.mp4
+*.zip
 .vscode
 _wandb
 
