@@ -1,0 +1,19 @@
+# Keep the Docker build context small and prevent runtime artifacts from being
+# embedded into an image.
+.git/
+.tools/
+data/
+data_local/
+runs/
+outputs/
+logs/
+wandb/
+_wandb/
+*.ckpt
+*.mp4
+*.zip
+*.tar
+*.tar.gz
+__pycache__/
+*.py[cod]
+.vscode/

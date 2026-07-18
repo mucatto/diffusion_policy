@@ -1,0 +1,39 @@
+# Minimal environment for the Diffusion Policy Push-T low-dimensional workflow.
+# This deliberately excludes MuJoCo, robosuite, PyTorch3D, real robots, and
+# image Push-T extras. Those belong in a later, separately reviewed image.
+ARG BASE_IMAGE=nvidia/cuda:12.4.0-base-ubuntu22.04
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYGAME_HIDE_SUPPORT_PROMPT=1 \
+    SDL_VIDEODRIVER=dummy \
+    PATH=/opt/dp-venv/bin:${PATH}
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        ffmpeg \
+        git \
+        libgl1 \
+        libglib2.0-0 \
+        libgomp1 \
+        python3 \
+        python3-pip \
+        python3-venv \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m venv /opt/dp-venv
+
+COPY docker/requirements-pusht.txt /tmp/requirements-pusht.txt
+
+# pip < 23 keeps the legacy Gym 0.21 package build compatible with this
+# repository. --no-cache-dir prevents a duplicate pip cache in the image.
+RUN python -m pip install --no-cache-dir \
+        'pip<23' \
+        'setuptools<66' \
+        'wheel<0.39' \
+    && python -m pip install --no-cache-dir -r /tmp/requirements-pusht.txt
+
+WORKDIR /workspace/code
+CMD ["/bin/bash"]
