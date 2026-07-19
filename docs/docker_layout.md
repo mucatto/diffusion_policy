@@ -41,10 +41,22 @@ Git or Docker image layers.
 
 ## Image policy
 
-`docker/Dockerfile.pusht` derives from the already cached
-`nvidia/cuda:12.4.0-base-ubuntu22.04` image. The base layer is shared; only
-the minimal Push-T Python environment adds new image layers under
-`/var/lib/docker`.
+`docker/Dockerfile.pusht` remains the reproducible recipe. The default image
+creation entry point is `scripts/docker/build_pusht.sh`, which starts a
+resource-limited bootstrap container from the already cached
+`nvidia/cuda:12.4.0-base-ubuntu22.04` image. Inside that container,
+`docker/install_pusht_env.sh` installs the minimal Push-T environment, then
+`docker commit` saves the stopped container as
+`zty/diffusion-policy-pusht:torch1.12-cu116`.
+
+The bootstrap container has no GPU access, six CPU cores, 10 GiB memory, a
+one GiB shared-memory limit, and a two-hour timeout. It uses the network only
+for explicit package installation. On a successful commit, the bootstrap
+container is removed. On failure, it remains stopped for inspection and its
+log is stored under `/groups/2/sk/diffusion_policy/runs/`.
+
+The shared CUDA base layer is reused; only the minimal Push-T Python
+environment adds new image layers under `/var/lib/docker`.
 
 This first image intentionally supports only Push-T low-dim evaluation and a
 short low-dim training run. MuJoCo, robosuite, PyTorch3D, Jetson deployment,

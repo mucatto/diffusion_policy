@@ -1,3 +1,5 @@
 # Docker build files and Linux shell scripts must retain LF line endings.
+.gitattributes text eol=lf
 docker/** text eol=lf
 scripts/docker/*.sh text eol=lf
+docs/docker_layout.md text eol=lf
