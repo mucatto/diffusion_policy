@@ -7,6 +7,25 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 export DEBIAN_FRONTEND=noninteractive
 
+# These settings apply only to this container layer. They never alter the
+# shared Ubuntu host, Docker daemon, or another user's container.
+UBUNTU_MIRROR="${DP_UBUNTU_MIRROR:-https://mirrors.tuna.tsinghua.edu.cn/ubuntu/}"
+PIP_INDEX_URL="${DP_PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}"
+export PIP_INDEX_URL
+
+sed -i \
+  -e "s|http://archive.ubuntu.com/ubuntu/|${UBUNTU_MIRROR}|g" \
+  -e "s|http://security.ubuntu.com/ubuntu/|${UBUNTU_MIRROR}|g" \
+  /etc/apt/sources.list
+
+# The CUDA runtime is already part of the base image. This Push-T setup does
+# not install CUDA packages through apt, so skip the unrelated NVIDIA apt
+# index during the bootstrap download.
+if [[ -f /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list ]]; then
+  mv /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list \
+    /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list.disabled
+fi
+
 apt-get update
 apt-get install -y --no-install-recommends \
   ca-certificates \

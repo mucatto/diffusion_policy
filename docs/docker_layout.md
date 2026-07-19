@@ -55,6 +55,14 @@ for explicit package installation. On a successful commit, the bootstrap
 container is removed. On failure, it remains stopped for inspection and its
 log is stored under `/groups/2/sk/diffusion_policy/runs/`.
 
+During this container-only installation, Ubuntu package URLs are redirected to
+the Tsinghua Ubuntu mirror and ordinary Python packages use the Tsinghua PyPI
+mirror. The pinned CUDA 11.6 PyTorch wheels remain sourced from the official
+PyTorch index declared in `requirements-pusht.txt`. The base image's unused
+NVIDIA CUDA apt source is disabled only inside the image layer, so
+`apt-get update` does not make an unrelated NVIDIA repository request. None
+of these settings modify the Ubuntu host, Docker daemon, or other containers.
+
 The shared CUDA base layer is reused; only the minimal Push-T Python
 environment adds new image layers under `/var/lib/docker`.
 
