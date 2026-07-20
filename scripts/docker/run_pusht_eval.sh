@@ -6,7 +6,7 @@ set -Eeuo pipefail
 
 DP_CODE_ROOT="${DP_CODE_ROOT:-$(pwd)}"
 DP_STORAGE_ROOT="${DP_STORAGE_ROOT:-/groups/2/sk/diffusion_policy}"
-DP_IMAGE="${DP_IMAGE:-zty/diffusion-policy-pusht:torch1.12-cu116}"
+DP_IMAGE="${DP_IMAGE:-zty/diffusion-policy-pusht:lowdim-v1}"
 DP_RUN_NAME="${DP_RUN_NAME:-pusht-lowdim-$(date +%Y%m%d-%H%M%S)}"
 DP_CHECKPOINT="${DP_CHECKPOINT:-${DP_STORAGE_ROOT}/checkpoints/pusht_lowdim.ckpt}"
 DP_OUTPUT_DIR="${DP_OUTPUT_DIR:-${DP_STORAGE_ROOT}/runs/${DP_RUN_NAME}}"

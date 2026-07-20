@@ -78,6 +78,7 @@ environment adds new image layers under `/var/lib/docker`.
 | `nvidia/cuda:12.4.0-base-ubuntu22.04` | shared base | Cached NVIDIA CUDA base; never prune or modify for this project. |
 | `zty/diffusion-policy-pusht:torch1.12-cu116` | retained baseline | Initial Push-T image; retained because its unconstrained Hugging Face Hub dependency was incompatible with Diffusers 0.11.1. |
 | `zty/diffusion-policy-pusht:torch1.12-cu116-hf0121` | repair candidate | Evaluation image with `huggingface-hub==0.12.1`; it passed the import and dependency checks and awaits a successful official evaluation. |
+| `zty/diffusion-policy-pusht:lowdim-v1` | validated | Official low-dimensional checkpoint evaluation and short-training environment; passed imports, video encoding, checkpoint loading, and eight test rollouts. |
 
 The repaired image has Docker labels beginning with `research.` that record
 the project, task, purpose, base image, repair, and status. Tags do not imply
@@ -89,6 +90,12 @@ Do not use global cleanup commands such as `docker system prune`. If an image
 is later obsolete, first review its tag, labels, size, parent relationship, and
 whether any current wrapper references it; deletion still requires explicit
 user approval.
+
+The validated `lowdim-v1` image is the default used by both Docker wrapper
+scripts. Its parent image still carries an old `/bin/bash` entrypoint, so the
+evaluation wrapper explicitly sets `/usr/bin/timeout`. Rebuilding from the
+checked-in bootstrap script starts from the clean NVIDIA CUDA base and uses
+the checked-in `CMD ["/bin/bash"]` configuration.
 
 This first image intentionally supports only Push-T low-dim evaluation and a
 short low-dim training run. MuJoCo, robosuite, PyTorch3D, Jetson deployment,

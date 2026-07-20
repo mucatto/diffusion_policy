@@ -4,13 +4,12 @@ Last updated: 2026-07-20
 
 ## Current Status
 
-- Stage: official low-dimensional Push-T pretrained evaluation
-- Result: isolated Docker environment and checkpoint are ready; the first
-  evaluation reached the Python import stage and exposed a dependency mismatch.
-- Blocking issue: resolved in a repaired, tagged evaluation-candidate image;
-  the official smoke evaluation must be rerun.
-- Next action: fresh GPU inspection, then rerun the eight-seed smoke evaluation
-  with the repaired image.
+- Stage: official low-dimensional Push-T pretrained evaluation completed
+- Result: the validated environment loaded the official checkpoint, completed
+  eight test rollouts, produced finite metrics, and generated valid videos.
+- Blocking issue: none for the first reproduction phase.
+- Next action: follow one inference call through the core code, then prepare the
+  bounded low-dimensional short-training run from the four-week plan.
 
 ## Scope and Success Criteria
 
@@ -42,8 +41,8 @@ Read-only checks were completed before any remote project modification.
 - SSH user: `zty_group`
 - Personal project root: `/home/zty_group/sk`
 - Project path: `/home/zty_group/sk/diffusion_policy`
-- Project branch and commit after synchronization: `repro/pusht-minimal` at
-  `a900d72`
+- Project branch and environment-recipe commit: `repro/pusht-minimal` at
+  `2ddc935`
 - OS: Ubuntu 24.04.3 LTS
 - System Python: 3.12.3 at `/usr/local/bin/python`
 - Conda/Mamba in `PATH`: not found
@@ -70,8 +69,8 @@ Read-only checks were completed before any remote project modification.
 - Do not access unrelated projects under `/home/zty_group/sk`.
 - Use at most one GPU, selected only after a fresh `nvidia-smi` check.
 - Planned CPU limit: 6 logical CPUs, below the default ceiling of 8.
-- Planned memory hard limit: 12 GiB; stop before launch if it cannot be
-  enforced safely for the new process.
+- Container memory hard limit: 10 GiB, below the workspace ceiling of about
+  12 GiB.
 - Keep the environment, caches, logs, checkpoints, and videos inside the
   current remote project.
 - Do not delete remote files without explicit approval.
@@ -136,32 +135,43 @@ Validation and tests:
 
 ## Environment Setup
 
-- Status: ready for low-dimensional Push-T evaluation.
+- Status: validated by imports, MP4 encode/decode, checkpoint loading, and a
+  complete eight-test-rollout evaluation.
 - Image recipe: `docker/Dockerfile.pusht` and
   `docker/install_pusht_env.sh`.
 - Initial image: `zty/diffusion-policy-pusht:torch1.12-cu116`.
-- Repaired evaluation-candidate image:
-  `zty/diffusion-policy-pusht:torch1.12-cu116-hf0121`.
+- Validated image: `zty/diffusion-policy-pusht:lowdim-v1`.
+- Image ID: `sha256:d2c990d6f966b3663a3bc3b4df69d595449335671646c78253c7e45fffef2930`.
+- Image size: 5,767,462,964 bytes; its new writable environment layer was
+  approximately 371 MiB and shares all unchanged parent layers.
 - Python: 3.10.12.
 - PyTorch: 1.12.1+cu116.
 - Diffusers: 0.11.1.
 - Hugging Face Hub: 0.12.1, pinned in `docker/requirements-pusht.txt`.
-- CUDA visibility: verified separately on approved GPU 3 in a restricted
-  container; normal evaluation still requires a fresh preflight check.
+- Pandas: 1.5.3.
+- PyAV: 10.0.0, built with Cython 0.29.36 against Ubuntu 22.04 FFmpeg 4.4.
+- CUDA visibility and inference were verified on an idle RTX 4090 selected by
+  a fresh preflight check. Future runs still require a new check.
+- The committed image inherits `/bin/bash` from its parent as an entrypoint;
+  the evaluation wrapper explicitly overrides it with `/usr/bin/timeout`.
 
 ## Pretrained Push-T Low-Dim Evaluation
 
-- Status: first smoke run stopped before rollout; rerun pending.
+- Status: passed.
 - Checkpoint: official `epoch=0550-test_mean_score=0.969.ckpt`
-- Device in first attempt: GPU 3 after a fresh check; this selection is stale
-  and must not be reused without another check.
+- Device: GPU 3, an RTX 4090 with no compute process at launch.
 - Inference steps: 100 for the official baseline
 - Parallel environments: at most 8; planned default is 6 or fewer
-- Random seed: fixed and recorded before execution
-- First smoke settings: 100 inference steps, four parallel environments, zero
+- Random seed: `20260720`.
+- Successful smoke settings: 100 inference steps, four parallel environments, zero
   train rollouts, eight test rollouts, seed `20260720`, one-hour timeout.
-- Result: no `eval_log.json` or rollout video because importing Diffusers
-  failed before the runner started.
+- Result: `test/mean_score = 0.9994508049019712`; all eight per-seed scores
+  were finite and ranged from 0.9965998055 to 1.0.
+- Runtime shape trace: observations `[4, 2, 20]`, denoised trajectory
+  `[4, 16, 2]`, and returned execution chunk `[4, 8, 2]`.
+- Four parallel-environment videos were generated. Their decoded contact
+  sheets showed the gray T moving into the green target region without black
+  frames or corrupt output.
 
 ## Result Paths
 
@@ -171,12 +181,18 @@ Validation and tests:
   `/groups/2/sk/diffusion_policy/runs/download-pusht-lowdim-retry.log`
 - Official checkpoint:
   `/groups/2/sk/diffusion_policy/checkpoints/pusht_lowdim.ckpt`
+- Checkpoint SHA-256:
+  `f804e16575e261fa0b7e981da3f67741fc8517817734320d550e43a4182bf876`
 - First evaluation driver log:
   `/groups/2/sk/diffusion_policy/runs/pusht-lowdim-pretrained-smoke-20260720.driver.log`
-- `eval_log.json`: pending successful rerun.
-- Rollout videos: pending successful rerun.
-- Extracted video-review frames: pending
-- Local inspection copy: pending
+- Successful evaluation log:
+  `/groups/2/sk/diffusion_policy/runs/pusht-lowdim-pretrained-smoke-lowdim-v1-20260720.log`
+- `eval_log.json`:
+  `/groups/2/sk/diffusion_policy/runs/pusht-lowdim-pretrained-smoke-lowdim-v1-20260720/eval_log.json`
+- Rollout videos:
+  `/groups/2/sk/diffusion_policy/runs/pusht-lowdim-pretrained-smoke-lowdim-v1-20260720/media/`
+- Local ignored inspection copy and contact sheets:
+  `.tools/video-review/pusht-lowdim-v1-20260720/`
 
 ## Errors and Resolutions
 
@@ -194,6 +210,19 @@ Validation and tests:
 - Impact: no GPU rollout ran, no metrics or videos were generated, and the
   public checkpoint was not modified.
 
+### Missing low-dimensional evaluation dependencies
+
+- Symptom: subsequent imports reported missing `pandas`, then missing `av`.
+- Cause: the initial minimal pip dependency list omitted the JSON logger and
+  video-recorder dependencies that are imported by the official evaluation
+  path.
+- Resolution: pinned pandas 1.5.3 and PyAV 10.0.0. PyAV 10 requires Cython
+  0.29.36 and `--no-build-isolation` when compiled in this Python 3.10 image;
+  the necessary FFmpeg development libraries are installed only inside the
+  container image.
+- Verification: `pip check`, full core-module imports, a five-frame MP4
+  encode/decode test, checkpoint loading, and the full smoke evaluation passed.
+
 ### Read-only SSH command quoting
 
 - Symptom: two compound inspection commands failed before reaching the remote
@@ -203,6 +232,5 @@ Validation and tests:
 
 ## Next Action
 
-Run a fresh read-only resource check. If an approved GPU remains free, rerun
-the eight-test-rollout official smoke evaluation using
-`zty/diffusion-policy-pusht:torch1.12-cu116-hf0121`.
+Trace a single inference call through `eval.py`, the runner, policy, scheduler,
+and action extraction using the successful runtime evidence recorded here.
