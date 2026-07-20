@@ -55,4 +55,7 @@ python3 -m venv /opt/dp-venv
   'setuptools<66' \
   'wheel<0.39'
 /opt/dp-venv/bin/python -m pip install --no-cache-dir \
+  'Cython==0.29.36'
+/opt/dp-venv/bin/python -m pip install --no-cache-dir \
+  --no-build-isolation \
   -r "${SCRIPT_DIR}/requirements-pusht.txt"

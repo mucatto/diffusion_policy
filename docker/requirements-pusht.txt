@@ -6,6 +6,8 @@
 torch==1.12.1+cu116
 torchvision==0.13.1+cu116
 numpy==1.23.3
+# PyAV 10.0.0 does not build with Cython 3.x.
+Cython==0.29.36
 pandas==1.5.3
 numba==0.56.4
 scipy==1.9.1
