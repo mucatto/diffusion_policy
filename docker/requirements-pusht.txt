@@ -31,3 +31,5 @@ tensorboardx==2.5.1
 psutil==5.9.2
 click==8.0.4
 diffusers==0.11.1
+# diffusers 0.11.1 imports HfFolder, removed by newer huggingface-hub releases.
+huggingface-hub==0.12.1
