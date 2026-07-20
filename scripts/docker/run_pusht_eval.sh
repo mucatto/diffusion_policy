@@ -52,6 +52,7 @@ mkdir -p "$(dirname "${DP_LOG_PATH}")"
 
 docker run --rm --init \
   --name "zty-dp-${DP_RUN_NAME}" \
+  --entrypoint /usr/bin/timeout \
   --gpus "device=${DP_GPU}" \
   --cpus 6 \
   --memory 10g \
@@ -75,7 +76,7 @@ docker run --rm --init \
   --mount "type=bind,src=${DP_CODE_ROOT},dst=/workspace/code,readonly" \
   --mount "type=bind,src=${DP_STORAGE_ROOT},dst=/workspace/storage" \
   "${DP_IMAGE}" \
-  timeout --foreground --signal=TERM --kill-after=600 "${DP_MAX_RUNTIME_SECONDS}s" \
+  --foreground --signal=TERM --kill-after=600 "${DP_MAX_RUNTIME_SECONDS}s" \
   python eval.py \
     --checkpoint /workspace/storage/checkpoints/"$(basename "${DP_CHECKPOINT}")" \
     --output_dir /workspace/storage/runs/"$(basename "${DP_OUTPUT_DIR}")" \
