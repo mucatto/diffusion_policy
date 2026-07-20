@@ -6,6 +6,7 @@
 torch==1.12.1+cu116
 torchvision==0.13.1+cu116
 numpy==1.23.3
+pandas==1.5.3
 numba==0.56.4
 scipy==1.9.1
 opencv-python-headless==4.6.0.66
@@ -26,6 +27,7 @@ threadpoolctl==3.1.0
 shapely==1.8.4
 imageio==2.22.0
 imageio-ffmpeg==0.4.7
+av==10.0.0
 tensorboard==2.10.1
 tensorboardx==2.5.1
 psutil==5.9.2

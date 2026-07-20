@@ -28,13 +28,23 @@ fi
 
 apt-get update
 apt-get install -y --no-install-recommends \
+  build-essential \
   ca-certificates \
   ffmpeg \
   git \
+  libavcodec-dev \
+  libavdevice-dev \
+  libavfilter-dev \
+  libavformat-dev \
+  libavutil-dev \
   libgl1 \
   libglib2.0-0 \
   libgomp1 \
+  libswresample-dev \
+  libswscale-dev \
+  pkg-config \
   python3 \
+  python3-dev \
   python3-pip \
   python3-venv
 rm -rf /var/lib/apt/lists/*
