@@ -14,7 +14,12 @@ DP_LOG_PATH="${DP_LOG_PATH:-${DP_STORAGE_ROOT}/runs/${DP_RUN_NAME}.log}"
 # Conservative defaults for a shared host. They stay below the workspace
 # ceiling of 8 CPU threads / about 12 GiB memory.
 DP_N_ENVS="${DP_N_ENVS:-4}"
-DP_MAX_RUNTIME_SECONDS=85800  # 23 h 50 min; longer runs need a reviewed script change.
+DP_MAX_RUNTIME_SECONDS="${DP_MAX_RUNTIME_SECONDS:-85800}"  # 23 h 50 min by default.
+
+if ! [[ "${DP_MAX_RUNTIME_SECONDS}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "DP_MAX_RUNTIME_SECONDS must be a positive integer: ${DP_MAX_RUNTIME_SECONDS}" >&2
+  exit 2
+fi
 
 if [[ ! -f "${DP_CHECKPOINT}" ]]; then
   echo "Checkpoint does not exist: ${DP_CHECKPOINT}" >&2

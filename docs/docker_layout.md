@@ -55,6 +55,11 @@ for explicit package installation. On a successful commit, the bootstrap
 container is removed. On failure, it remains stopped for inspection and its
 log is stored under `/groups/2/sk/diffusion_policy/runs/`.
 
+The evaluation wrapper defaults to a 23-hour-50-minute timeout, but accepts a
+positive `DP_MAX_RUNTIME_SECONDS` override. Short smoke evaluations must set a
+reviewed lower cap (for example, 3600 seconds) rather than relying on the
+long default.
+
 During this container-only installation, Ubuntu package URLs are redirected to
 the Tsinghua Ubuntu mirror and ordinary Python packages use the Tsinghua PyPI
 mirror. The pinned CUDA 11.6 PyTorch wheels remain sourced from the official
