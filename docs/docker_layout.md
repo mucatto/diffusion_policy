@@ -71,6 +71,25 @@ of these settings modify the Ubuntu host, Docker daemon, or other containers.
 The shared CUDA base layer is reused; only the minimal Push-T Python
 environment adds new image layers under `/var/lib/docker`.
 
+## Image inventory and lifecycle
+
+| Tag | Status | Purpose |
+| --- | --- | --- |
+| `nvidia/cuda:12.4.0-base-ubuntu22.04` | shared base | Cached NVIDIA CUDA base; never prune or modify for this project. |
+| `zty/diffusion-policy-pusht:torch1.12-cu116` | retained baseline | Initial Push-T image; retained because its unconstrained Hugging Face Hub dependency was incompatible with Diffusers 0.11.1. |
+| `zty/diffusion-policy-pusht:torch1.12-cu116-hf0121` | repair candidate | Evaluation image with `huggingface-hub==0.12.1`; it passed the import and dependency checks and awaits a successful official evaluation. |
+
+The repaired image has Docker labels beginning with `research.` that record
+the project, task, purpose, base image, repair, and status. Tags do not imply
+that each image consumes its displayed size independently: Docker shares the
+unchanged base layers. The repair's writable container layer was approximately
+9 MiB before commit.
+
+Do not use global cleanup commands such as `docker system prune`. If an image
+is later obsolete, first review its tag, labels, size, parent relationship, and
+whether any current wrapper references it; deletion still requires explicit
+user approval.
+
 This first image intentionally supports only Push-T low-dim evaluation and a
 short low-dim training run. MuJoCo, robosuite, PyTorch3D, Jetson deployment,
 real robots, and image tasks are deferred to separately reviewed environments.
