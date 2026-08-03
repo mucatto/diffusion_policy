@@ -78,7 +78,7 @@ environment adds new image layers under `/var/lib/docker`.
 | `nvidia/cuda:12.4.0-base-ubuntu22.04` | shared base | Cached NVIDIA CUDA base; never prune or modify for this project. |
 | `zty/diffusion-policy-pusht:torch1.12-cu116` | retained baseline | Initial Push-T image; retained because its unconstrained Hugging Face Hub dependency was incompatible with Diffusers 0.11.1. |
 | `zty/diffusion-policy-pusht:torch1.12-cu116-hf0121` | repair candidate | Evaluation image with `huggingface-hub==0.12.1`; it passed the import and dependency checks and awaits a successful official evaluation. |
-| `zty/diffusion-policy-pusht:lowdim-v1` | validated | Official low-dimensional checkpoint evaluation and short-training environment; passed imports, video encoding, checkpoint loading, and eight test rollouts. |
+| `sk/diffusion-policy-pusht:lowdim-v1` | validated | Official low-dimensional checkpoint evaluation and short-training environment; passed imports, video encoding, checkpoint loading, and eight test rollouts. |
 
 The repaired image has Docker labels beginning with `research.` that record
 the project, task, purpose, base image, repair, and status. Tags do not imply

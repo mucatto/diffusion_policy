@@ -6,8 +6,8 @@ set -Eeuo pipefail
 DP_CODE_ROOT="${DP_CODE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 DP_STORAGE_ROOT="${DP_STORAGE_ROOT:-/groups/2/sk/diffusion_policy}"
 DP_BASE_IMAGE="${DP_BASE_IMAGE:-nvidia/cuda:12.4.0-base-ubuntu22.04}"
-DP_IMAGE="${DP_IMAGE:-zty/diffusion-policy-pusht:lowdim-v1}"
-DP_BOOTSTRAP_NAME="${DP_BOOTSTRAP_NAME:-zty-dp-pusht-bootstrap-$(date +%Y%m%d-%H%M%S)}"
+DP_IMAGE="${DP_IMAGE:-sk/diffusion-policy-pusht:lowdim-v1}"
+DP_BOOTSTRAP_NAME="${DP_BOOTSTRAP_NAME:-sk-dp-pusht-bootstrap-$(date +%Y%m%d-%H%M%S)}"
 DP_LOG_PATH="${DP_LOG_PATH:-${DP_STORAGE_ROOT}/runs/${DP_BOOTSTRAP_NAME}.log}"
 DP_BOOTSTRAP_TIMEOUT_SECONDS=7200
 
